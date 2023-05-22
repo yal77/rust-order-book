@@ -1,7 +1,11 @@
 use super::OrderSide;
 use super::Price;
+use queues;
+use queues::queue;
+use queues::IsQueue;
+use queues::Queue;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Order {
     side: OrderSide,
     size: f64,
@@ -16,18 +20,18 @@ impl Order {
 #[derive(Debug)]
 pub struct Limit {
     price: Price,
-    orders: Vec<Order>,
+    orders: queues::Queue<Order>,
 }
 
 impl Limit {
     pub fn new(price: Price) -> Limit {
         Limit {
             price,
-            orders: Vec::new(),
+            orders: Queue::new(),
         }
     }
 
     pub fn add_order(&mut self, order: Order) {
-        self.orders.push(order);
+        self.orders.add(order);
     }
 }
