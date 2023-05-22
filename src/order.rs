@@ -1,7 +1,8 @@
+use std::println;
+
 use super::OrderSide;
 use super::Price;
 use queues;
-use queues::queue;
 use queues::IsQueue;
 use queues::Queue;
 
@@ -19,19 +20,23 @@ impl Order {
 
 #[derive(Debug)]
 pub struct Limit {
-    price: Price,
+    pub price: Price,
     orders: queues::Queue<Order>,
 }
 
 impl Limit {
-    pub fn new(price: Price) -> Limit {
+    pub fn new(price: &Price) -> Limit {
         Limit {
-            price,
+            price: price.clone(),
             orders: Queue::new(),
         }
     }
 
     pub fn add_order(&mut self, order: Order) {
-        self.orders.add(order);
+        let res = self.orders.add(order);
+        match res {
+            Err(err) => println!("Error in adding order: {}", err),
+            _ => (),
+        }
     }
 }

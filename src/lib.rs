@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 pub mod order_book;
 
 pub mod order;
@@ -23,6 +24,13 @@ impl Price {
             scalar,
             integral,
             fractional,
+        }
+    }
+    pub fn clone(&self) -> Price {
+        Price {
+            integral: self.integral,
+            scalar: self.scalar,
+            fractional: self.fractional,
         }
     }
 }
