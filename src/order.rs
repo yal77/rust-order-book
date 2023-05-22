@@ -1,27 +1,33 @@
 use super::OrderSide;
 use super::Price;
 
+#[derive(Debug)]
 pub struct Order {
     side: OrderSide,
     size: f64,
 }
 
 impl Order {
-    fn new(side: OrderSide, size: f64) -> Order {
+    pub fn new(side: OrderSide, size: f64) -> Order {
         Order { side, size }
     }
 }
 
+#[derive(Debug)]
 pub struct Limit {
     price: Price,
     orders: Vec<Order>,
 }
 
 impl Limit {
-    pub fn new(price: f64, scalar: u64) -> Limit {
+    pub fn new(price: Price) -> Limit {
         Limit {
-            price: Price::new(price, scalar),
+            price,
             orders: Vec::new(),
         }
+    }
+
+    pub fn add_order(&mut self, order: Order) {
+        self.orders.push(order);
     }
 }
