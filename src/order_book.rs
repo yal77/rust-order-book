@@ -1,10 +1,12 @@
 #![allow(dead_code)]
 use crate::order::Order;
+use crate::MarketOrderSide;
 
 use super::order::Limit;
 use super::OrderSide;
 use ordered_float::OrderedFloat;
 use std::collections::HashMap;
+use std::println;
 
 #[derive(Debug)]
 pub struct OrderBook {
@@ -48,12 +50,49 @@ impl OrderBook {
         }
     }
 
+    pub fn add_market_order(&mut self, size: f64, order_side: MarketOrderSide) -> f64 {
+        match order_side {
+            MarketOrderSide::Buy => {
+                let best_ask = self.get_best_ask();
+                let limit = self.asks.get_mut(&OrderedFloat(best_ask));
+                let rem = match limit {
+                    Some(limit) => limit.fill_market_order(size),
+                    None => {
+                        println!("No Liquidity Avaliable");
+                        return size;
+                    }
+                };
+                if rem > 0.0 {
+                    self.asks.remove(&OrderedFloat(best_ask));
+                    return self.add_market_order(rem, order_side);
+                }
+            }
+            MarketOrderSide::Sell => {
+                let best_bid = self.get_best_bid();
+                let limit = self.bids.get_mut(&OrderedFloat(best_bid));
+                let rem = match limit {
+                    Some(limit) => limit.fill_market_order(size),
+                    None => {
+                        println!("No Liquidity Avaliable");
+                        return size;
+                    }
+                };
+                if rem > 0.0 {
+                    self.bids.remove(&OrderedFloat(best_bid));
+                    return self.add_market_order(rem, order_side);
+                }
+            }
+        }
+        return 0.0;
+    }
+
+    // Turn these to Option<f64>
     pub fn get_best_ask(&self) -> f64 {
         let mut min = OrderedFloat(f64::INFINITY);
         for (_k, v) in &self.asks {
-            let price = v.price;
+            let price = v.get_price();
             if price < min {
-                min = v.price;
+                min = v.get_price();
             }
         }
         min.into_inner()
@@ -61,9 +100,9 @@ impl OrderBook {
     pub fn get_best_bid(&self) -> f64 {
         let mut max = OrderedFloat(0.0);
         for (_k, v) in &self.asks {
-            let price = v.price;
+            let price = v.get_price();
             if price > max {
-                max = v.price;
+                max = v.get_price();
             }
         }
         max.into_inner()

@@ -9,3 +9,8 @@ pub enum OrderSide {
     Bid,
     Ask,
 }
+
+pub enum MarketOrderSide {
+    Buy,
+    Sell,
+}
