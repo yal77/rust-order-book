@@ -8,6 +8,7 @@ use ordered_float::OrderedFloat;
 use std::collections::HashMap;
 use std::println;
 
+use itertools::Itertools;
 #[derive(Debug)]
 pub struct OrderBook {
     asks: HashMap<OrderedFloat<f64>, Limit>,
@@ -51,6 +52,9 @@ impl OrderBook {
     }
 
     pub fn add_market_order(&mut self, size: f64, order_side: MarketOrderSide) -> f64 {
+        if size < 0.0 {
+            return 0.0;
+        }
         match order_side {
             MarketOrderSide::Buy => {
                 let best_ask = self.get_best_ask();
@@ -62,9 +66,12 @@ impl OrderBook {
                         return size;
                     }
                 };
-                if rem > 0.0 {
+                if rem.1 <= 0.0 {
                     self.asks.remove(&OrderedFloat(best_ask));
-                    return self.add_market_order(rem, order_side);
+                }
+                if rem.0 > 0.0 {
+                    self.asks.remove(&OrderedFloat(best_ask));
+                    return self.add_market_order(rem.0, order_side);
                 }
             }
             MarketOrderSide::Sell => {
@@ -73,13 +80,16 @@ impl OrderBook {
                 let rem = match limit {
                     Some(limit) => limit.fill_market_order(size),
                     None => {
-                        println!("No Liquidity Avaliable");
+                        println!("No Liquidity Avaliable, Remaining: {}", size);
                         return size;
                     }
                 };
-                if rem > 0.0 {
+                if rem.1 <= 0.0 {
                     self.bids.remove(&OrderedFloat(best_bid));
-                    return self.add_market_order(rem, order_side);
+                }
+                if rem.0 > 0.0 {
+                    self.bids.remove(&OrderedFloat(best_bid));
+                    return self.add_market_order(rem.0, order_side);
                 }
             }
         }
@@ -99,7 +109,7 @@ impl OrderBook {
     }
     pub fn get_best_bid(&self) -> f64 {
         let mut max = OrderedFloat(0.0);
-        for (_k, v) in &self.asks {
+        for (_k, v) in &self.bids {
             let price = v.get_price();
             if price > max {
                 max = v.get_price();
@@ -110,5 +120,17 @@ impl OrderBook {
 
     pub fn get_mid_price(&self) -> f64 {
         (self.get_best_ask() + self.get_best_bid()) / 2.0
+    }
+
+    pub fn print_orderbook(&self) {
+        for key in self.asks.keys().sorted().rev() {
+            let size = self.asks.get(key).unwrap().get_size();
+            println!("{} - {} ", key, size);
+        }
+        println!("------------ {}", self.get_mid_price());
+        for key in self.bids.keys().sorted() {
+            let size = self.bids.get(key).unwrap().get_size();
+            println!("{} - {} ", key, size);
+        }
     }
 }
