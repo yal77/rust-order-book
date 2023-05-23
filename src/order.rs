@@ -1,5 +1,5 @@
 use super::OrderSide;
-use super::Price;
+use ordered_float::OrderedFloat;
 use queues;
 use queues::IsQueue;
 use queues::Queue;
@@ -18,14 +18,14 @@ impl Order {
 
 #[derive(Debug)]
 pub struct Limit {
-    pub price: Price,
+    pub price: OrderedFloat<f64>,
     orders: queues::Queue<Order>,
 }
 
 impl Limit {
-    pub fn new(price: &Price) -> Limit {
+    pub fn new(price: OrderedFloat<f64>) -> Limit {
         Limit {
-            price: price.clone(),
+            price,
             orders: Queue::new(),
         }
     }
