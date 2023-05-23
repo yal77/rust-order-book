@@ -1,5 +1,3 @@
-use std::println;
-
 use super::OrderSide;
 use super::Price;
 use queues;
@@ -8,7 +6,7 @@ use queues::Queue;
 
 #[derive(Debug, Clone)]
 pub struct Order {
-    side: OrderSide,
+    pub side: OrderSide,
     size: f64,
 }
 

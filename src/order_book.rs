@@ -23,10 +23,9 @@ impl OrderBook {
         }
     }
 
-    pub fn add_limit_order(&mut self, price: f64, size: f64, side: OrderSide) {
+    pub fn add_limit_order(&mut self, price: f64, order: Order) {
         let order_price = Price::new(price, self.decimals);
-        let order = Order::new(OrderSide::Bid, size);
-        match side {
+        match order.side {
             OrderSide::Bid => {
                 let limit = self.bids.get_mut(&order_price);
                 match limit {
