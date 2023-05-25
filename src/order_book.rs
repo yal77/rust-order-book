@@ -25,7 +25,7 @@ impl OrderBook {
 
     pub fn add_limit_order(&mut self, price: f64, order: Order) {
         let order_price = OrderedFloat(price);
-        match order.side {
+        match order.get_side() {
             OrderSide::Bid => {
                 let limit = self.bids.get_mut(&order_price);
                 match limit {
@@ -128,7 +128,7 @@ impl OrderBook {
             println!("{} - {} ", key, size);
         }
         println!("------------ {}", self.get_mid_price());
-        for key in self.bids.keys().sorted() {
+        for key in self.bids.keys().sorted().rev() {
             let size = self.bids.get(key).unwrap().get_size();
             println!("{} - {} ", key, size);
         }

@@ -6,13 +6,26 @@ use ordered_float::OrderedFloat;
 
 #[derive(Debug, Clone)]
 pub struct Order {
-    pub side: OrderSide,
-    pub size: f64,
+    side: OrderSide,
+    size: f64,
+    id: u64,
 }
 
 impl Order {
     pub fn new(side: OrderSide, size: f64) -> Order {
-        Order { side, size }
+        Order { side, size, id: 5 }
+    }
+
+    pub fn get_id(&self) -> u64 {
+        self.id
+    }
+
+    pub fn get_size(&self) -> f64 {
+        self.size
+    }
+
+    pub fn get_side(&self) -> OrderSide {
+        self.side
     }
 }
 
@@ -33,6 +46,8 @@ impl Limit {
     pub fn add_order(&mut self, order: Order) {
         self.orders.push_back(order);
     }
+
+    pub fn cancel_order() {}
 
     pub fn fill_market_order(&mut self, mut size: f64) -> (f64, f64) {
         if size <= 0.0 {

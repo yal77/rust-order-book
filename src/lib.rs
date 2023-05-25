@@ -4,7 +4,7 @@ pub mod order_book;
 
 pub mod order;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum OrderSide {
     Bid,
     Ask,
