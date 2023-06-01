@@ -49,6 +49,7 @@ impl Limit {
 
     pub fn cancel_order() {}
 
+    //returns: (remaining order size, remaining limit size)
     pub fn fill_market_order(&mut self, mut size: f64) -> (f64, f64) {
         if size <= 0.0 {
             return (0.0, self.get_size());
