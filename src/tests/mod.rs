@@ -1,4 +1,3 @@
-#[cfg(test)]
 use std::assert_eq;
 
 use ordered_float::OrderedFloat;
