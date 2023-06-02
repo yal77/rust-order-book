@@ -1,8 +1,7 @@
+use crate::OrderSide;
+use ordered_float::OrderedFloat;
 use std::collections::VecDeque;
 use std::println;
-
-use super::OrderSide;
-use ordered_float::OrderedFloat;
 
 #[derive(Debug, Clone)]
 pub struct Order {

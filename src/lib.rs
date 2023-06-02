@@ -1,10 +1,12 @@
 #![allow(dead_code)]
 
+pub mod order;
 pub mod order_book;
 
-pub mod order;
+#[cfg(test)]
+mod tests;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum OrderSide {
     Bid,
     Ask,
